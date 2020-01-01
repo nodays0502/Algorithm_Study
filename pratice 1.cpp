@@ -1,64 +1,28 @@
 ﻿#include<iostream>
-#include<vector>
-#include<algorithm>
 using namespace std;
-/*int main()
-{
-	int noListenNum;
-	int noLookNum;
-	int count=0;
-	cin >> noListenNum >> noLookNum;
-	vector<string> List;
-	vector<string> sol;
-	string temp;
-	for (int i = 0; i < noListenNum; i++)
-	{
-		cin >> temp;
-		List.push_back(temp);
-	}
-	for (int i = 0; i < noLookNum; i++)
-	{
-		cin >> temp;
-		for (int j = 0; j < noListenNum; j++)
-		{
-			if (temp == List[j])
-			{
-				sol.push_back(List[j]);
-				count++;
-			}
-		}
-	}
-	cout << count<<endl;
-	for (int i = 0; i < count; i++)
-	{
-		cout<<sol[i]<<endl;
-	}
-}*/
+
 int main()
 {
-	vector <string> people;
-	int num1, num2;
-	cin >> num1 >> num2;
-	string temp;
-	for (int i = 0; i < num1 + num2; i++)
+	int  kg;
+	int count = 0;
+	cin >> kg;
+	while (kg > 0)
 	{
-		cin >> temp;
-		people.push_back(temp);
-	}
-	sort(people.begin(), people.end());
-	int count=0;
-	vector<string> sol;
-	for (int i = 0; i < num1 + num2 - 1; i++)
-	{
-		if (people[i] == people[i + 1])
+		if (kg % 5 == 0)
 		{
+			count += (kg / 5);
+			kg %= 5;
+		}
+		else if (kg >= 3)
+		{
+			kg -= 3;
 			count++;
-			sol.push_back(people[i]);
+		}
+		else
+		{
+			count = -1;
+			break;
 		}
 	}
-	cout << count << endl;
-	for (int i = 0; i < count; i++)
-	{
-		cout << sol[i] << endl;
-	}
+	cout << count;
 }
