@@ -1,0 +1,32 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+
+using namespace std;
+int result = 9;
+void solve(int N,int number,int count,int now)
+{
+    if(count >= result) return;
+    if(now == number) 
+    {
+        result = min(result,count);
+        return ;
+    }
+    int tempnum = 0;
+    for(int i =0;i+count<9;i++)
+    {
+        tempnum = tempnum *10 + N;
+        solve(N,number,count+1+i,now+tempnum);
+        solve(N,number,count+1+i,now-tempnum);
+        solve(N,number,count+1+i,now*tempnum);
+        solve(N,number,count+1+i,now/tempnum);
+    }
+}
+int solution(int N, int number) {
+    int answer = 0;
+    solve(N,number,0,0);
+    if(result == 9) return -1;
+    answer = result;
+    return answer;
+}
