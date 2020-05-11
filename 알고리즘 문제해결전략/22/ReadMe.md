@@ -1,4 +1,5 @@
 이진 검색 트리
+---
 map<int,int> Q;
 Q.insert(pair<int,int>(a,b));
 Q[a] = b;
