@@ -1,155 +1,123 @@
-package Study;
+package live;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class SWea_5644 {
-	static int dy[] = {0,-1,0,1,0}; // 상 우 하 좌
+	static int dy[] = {0,-1,0,1,0};
 	static int dx[] = {0,0,1,0,-1};
-	static int M, A ; // M  이동시간 , A BC의 개수
-	static int move[][];
-	static int BC[][];
-	static int map[][] = new int[10][10];
-	static int a[] = {0,0};
-	static int b[] = {9,9};
-	static int result = 0 ;
-	static void moving(int depth) {
-//		System.out.println("depth"+depth+" "+result);
-		int ay = a[0]; 
-		int ax = a[1];
-		int by = b[0];
-		int bx = b[1];
-		List<Integer> aL = new ArrayList<>();
-		List<Integer> bL = new ArrayList<>();
-		int temp = map[ay][ax];
-		while(temp > 0) {
-			aL.add(temp%10);
-			temp /= 10;
-		}
-		
-		temp =  map[by][bx];
-		while(temp > 0) {
-			bL.add(temp%10);
-			temp /= 10;
-		}
-	
-		int Aarea = 0;
-		int Afirst = 0;
-		int Asecond = 0 ;
-		for(int i = 0 ; i < aL.size(); i++) {
-			if(Afirst < BC[aL.get(i)][3]) {
-				Aarea = aL.get(i);
-				Asecond = Afirst;
-				Afirst = BC[aL.get(i)][3];
-			}else if(Asecond < BC[aL.get(i)][3]) {
-				Asecond = BC[aL.get(i)][3];
+	static ArrayList<Integer> map[][];
+	static int M,A; // 시간 , 개수
+	static int move[][] = new int[2][100];
+	static int battery[];
+	static int cal() {
+		int result = 0 ;
+		int ay = 0,ax = 0;
+		int by = 9,bx = 9;
+		for (int i = 0; i <= M; i++) {
+			PriorityQueue<Integer> A = new PriorityQueue<>((o1, o2) -> {
+				return battery[o2] - battery[o1];
+			});
+			PriorityQueue<Integer> B = new PriorityQueue<>((o1, o2) -> {
+				return battery[o2] - battery[o1];
+			});
+			for (int j = 0; j < map[by][bx].size(); j++) {
+				B.add(map[by][bx].get(j));
 			}
-		}
-		result += Afirst;
-		int Bfirst = 0;
-		int Bsecond = 0;
-		int Barea = 0;
-		
-		for(int i = 0 ; i < bL.size(); i++) {
-			if(Bfirst < BC[bL.get(i)][3]) {
-				Barea = bL.get(i);
-				Bsecond = Bfirst;
-				Bfirst = BC[bL.get(i)][3];
-			}else if(Asecond < BC[bL.get(i)][3]) {
-				Bsecond = BC[bL.get(i)][3];
+			for (int j = 0; j < map[ay][ax].size(); j++) {
+				A.add(map[ay][ax].get(j));
 			}
-		}
-		if(Barea == Aarea) {
-			result += Math.max(Asecond, Bsecond);
-		}else {
-			result+=Bfirst;			
-		}
-		if(depth == M) {
-			return ;
-		}else {
-			a[0] = ay + dy[move[0][depth]];
-			a[1] = ax + dx[move[0][depth]];
-			b[0] = by + dy[move[1][depth]];
-			b[1] = bx + dx[move[1][depth]];
-			moving(depth+1);
-		}
-	}
-	static void makeMap() {
-		for(int a = 1 ; a <= A ; a++) {
-			int x = BC[a][0]-1;
-			int y = BC[a][1]-1;
-			int c = BC[a][2];
-			int p = BC[a][3];
-		//	map[y][x] = p;
-			for(int i = 0 ; i <= c ; i++) {
-				for(int j = -i ; j <= i ; j++) {
-		//			System.out.println("1 "+i+" "+j);
-					if(!(y - c + i >= 0 && y - c + i < 10 && x+j>=0 && x+j<10))continue;
-					if(map[y - c + i][x + j] == 0 ) {
-						map[y - c + i][x + j] = a;
-					}else {
-						map[y - c + i][x + j] = map[y - c + i][x + j]*10 + a;
+			if(!A.isEmpty() && !B.isEmpty()) {
+				int a = A.poll();
+				int b = B.poll();
+				if(a == b) {
+					result += battery[a];
+					if(!A.isEmpty() && !B.isEmpty()) {
+						a = A.poll();
+						b = B.poll();
+						result+= Math.max(battery[a], battery[b]);
 					}
-				}
-			}		
-			for(int i = 0 ; i < c ; i++) {
-				for(int j = -i ; j <= i ; j++) {
-		//			System.out.println("2 "+i+" "+j);
-					if(!(y + c - i >= 0 && y + c - i < 10 && x+j>=0 && x+j<10))continue;
-					if(map[y + c - i][x + j] == 0 ) {
-						map[y + c - i][x + j] = a;
-					}else {
-						map[y + c - i][x + j] = map[y + c - i][x + j]*10 + a;
+					else if(A.isEmpty() && !B.isEmpty()) {
+						b = B.poll();
+						result+=battery[b];
 					}
+					else if(!A.isEmpty() && B.isEmpty()) {
+						a = A.poll();
+						result+= battery[a];
+					}
+					else  {
+						;
+					}
+				}else {
+					result += (battery[a]+battery[b]);					
 				}
-			}		
-	//		print();
-		}
-	}
-	static void print() {
-		for(int i = 0 ; i < 10 ; i++) {
-			for(int j = 0 ; j < 10 ; j++) {
-				System.out.printf("%6d ",map[i][j]);
 			}
-			System.out.println();
+			else if(A.isEmpty() && !B.isEmpty()) {
+				int b = B.poll();
+				result+=battery[b];
+			}else if(!A.isEmpty() && B.isEmpty()) {
+				int a = A.poll();
+				result+=battery[a];
+			}
+			if(i == M )break;
+			ay += dy[move[0][i]];
+			ax += dx[move[0][i]];
+			by += dy[move[1][i]];
+			bx += dx[move[1][i]];
 		}
-		System.out.println();
+		return result;
 	}
 	public static void main(String[] args) throws Exception {
-		System.setIn(new FileInputStream("src/SWea_5644.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine()," ");
 		int T = Integer.parseInt(st.nextToken());
-		for(int t = 1 ; t <= T ; t++) {
-			result = 0 ;
-			a = new int[] {0,0};
-			b = new int[] {9,9};
-			map = new int[10][10];
+		for(int t = 1; t <= T; t++) {
+			map = new ArrayList[10][10];
+			for(int i = 0 ; i < 10 ; i++) {
+				for(int j = 0 ; j < 10 ; j++) {
+					map[i][j] = new ArrayList<>();
+				}
+			}
+			int result = 0 ;
 			st = new StringTokenizer(br.readLine()," ");
 			M = Integer.parseInt(st.nextToken());
 			A = Integer.parseInt(st.nextToken());
-			move = new int[2][M];
-			for(int i = 0 ; i < 2 ; i++) {
+			for(int i = 0 ; i < 2; i++) {
 				st = new StringTokenizer(br.readLine()," ");
 				for(int j = 0 ; j < M ; j++) {
 					move[i][j] = Integer.parseInt(st.nextToken());
-				}				
-			}
-			BC = new int[A+1][4];
-			for(int i = 1 ; i <= A ; i++) {
-				st = new StringTokenizer(br.readLine()," ");
-				for(int j = 0 ; j < 4 ; j++) {
-					BC[i][j] = Integer.parseInt(st.nextToken());
 				}
 			}
-			makeMap();
-		//	print();
-			moving(0);
-			System.out.println("#"+t+" "+result);
+			battery = new int[A+1];
+			for(int i = 0 ; i < A; i++) {
+				st = new StringTokenizer(br.readLine()," ");
+				int x = Integer.parseInt(st.nextToken())-1;
+				int y = Integer.parseInt(st.nextToken())-1;
+				int c = Integer.parseInt(st.nextToken());
+				int p = Integer.parseInt(st.nextToken());
+				battery[i+1] = p;
+				makeMap(y,x,c,i+1);
+			}
+			result = cal();
+			System.out.printf("#%d %d\n",t, result);
+		}
+	}
+	private static void makeMap(int y, int x, int c,int now) {
+		for(int i = 0 ; i <= c ; i++) {
+			for(int j = -c+i ; j <= c-i ; j++) {
+				if(y+i >=0 && y+i < 10 && x+j >=0 && x+j < 10) {
+					map[y+i][x+j].add(now);
+				}
+			}
+			if(i == 0 )continue;
+			for(int j = -c+i ; j <= c-i ; j++) {
+				if(y-i >=0 && y-i < 10 && x+j >=0 && x+j < 10) {
+					map[y-i][x+j].add(now);
+				}
+			}
 		}
 	}
 }
