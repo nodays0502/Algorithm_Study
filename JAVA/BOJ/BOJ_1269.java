@@ -18,9 +18,9 @@ public class BOJ_1269 {
 		}*/
 		for(int i = 0 ; i < a ; i++) {
 			int start = 0;
-			int end = a;
+			int end = b - 1;
 			while(start <= end) {
-				int mid = (start + end)/2;
+				int mid = (start + end) / 2;
 				if(B[mid] == A[i]) {
 					result++;
 					break;
