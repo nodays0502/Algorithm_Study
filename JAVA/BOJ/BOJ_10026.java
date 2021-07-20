@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class BOJ_10026 {
-	static int n;
+	static int n; // 
 	static char input[][];
 	static boolean visited[][];
 	static int dx[] = {0,1,0,-1};
