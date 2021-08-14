@@ -1,75 +1,65 @@
-package DFS;
+package BOJ;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
+import java.util.function.Function;
 
 public class BOJ_2468 {
-	static int min = Integer.MAX_VALUE , max = Integer.MIN_VALUE , n;
-	static int input[][];
-	static int divide[][];
-	static int answer =  1;
-	static int dy[] = {0,1,0,-1};
-	static int dx[] = {1,0,-1,0};
-	static void makesafyzone(int height) {
-		for(int i = 0 ; i < n ; i++){
-			for(int j = 0 ; j < n ; j++) {
-				if(input[i][j] <= height) {
-					divide[i][j] = -1;
-				}else {
-					divide[i][j] = 0;
-				}
-			}
-		}
-	}
-	static int dfs(int y ,int x) {
-		if(divide[y][x] == -1) return 0;
-		else {
-			divide[y][x] = -1;
-			for(int i = 0 ; i < 4 ; i++) {
-				int ny = y + dy[i];
-				int nx = x + dx[i];
-				if(nx >= 0 && nx < n && ny >= 0 && ny < n && divide[ny][nx] != -1) {
-					dfs(ny,nx);
-				}
-			}
-			return 1;
-		}
-	}
-	static void print() {
-		for(int i = 0 ; i < n ; i++) {
-			for(int j = 0 ; j < n ; j++) {
-				System.out.print(divide[i][j]+" ");
-			}
-			System.out.println();
-		}
-	}
-	public static void main(String[] args)  throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine()," ");
-		n = Integer.parseInt(st.nextToken());
-		input = new int[n][n];
-		divide = new int[n][n];
-		for(int i = 0 ; i < n ; i++) {
-			 st = new StringTokenizer(br.readLine()," ");
-			for(int j = 0 ; j < n ; j++) {
-				input[i][j] = Integer.parseInt(st.nextToken());
-				min = Math.min(min, input[i][j]);
-				max = Math.max(max, input[i][j]);
-			}
-		}
-		for(int t = min ; t < max ; t++) {
-			makesafyzone(t);
-			int result = 0 ;			
-	//		print();
-			for(int i = 0 ; i < n ; i++) {
-				for(int j = 0 ; j < n ; j++) {
-					result += dfs(i,j);
-				}
-			}
-			answer = Math.max(answer, result);
-			if(answer == 9) {System.out.println(t);}
-		}
-		System.out.println(answer);
-	}
+
+    static int n;
+    static int map[][];
+    static boolean visited[][];
+    static int dy[] = {0,1,0,-1};
+    static int dx[] = {1,0,-1,0};
+
+    static int cal(int now) {
+        visited = new boolean[n][n];
+        int result = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!visited[i][j] && map[i][j] > now) {
+                    dfs(i, j, now);
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
+    private static void dfs(int y, int x, int now) {
+        visited[y][x] = true;
+        for(int i = 0 ; i < 4 ; i++){
+            int ny = y + dy[i];
+            int nx = x + dx[i];
+            if(ny >= 0 && ny < n && nx >= 0 && nx < n && !visited[ny][nx] && map[ny][nx] > now){
+                dfs(ny,nx,now);
+            }
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+        Function<String, Integer> stoi = Integer::parseInt;
+        n = stoi.apply(st.nextToken());
+        int min = 100;
+        int max = 0;
+        map = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            st = new StringTokenizer(br.readLine(), " ");
+            for (int j = 0; j < n; j++) {
+                map[i][j] = stoi.apply(st.nextToken());
+                min = Math.min(map[i][j] , min);
+                max = Math.max(map[i][j] , max);
+            }
+        }
+        int result = 1;
+        for(int i = min ; i < max ; i++){
+            result = Math.max(cal(i),result);
+//            System.out.println(result);
+        }
+        System.out.println(result);
+    }
+
 }
