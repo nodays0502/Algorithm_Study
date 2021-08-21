@@ -4,31 +4,50 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class BOJ_9251 {
-	static String input1,input2;
-	static int dp[][];
-	static int dfs(int a,int b) {
-		if(a >= input1.length() || b >= input2.length()) return 0;
-		if(dp[a][b] != -1 )return dp[a][b]; 
-		int result = 0 ;
-		if(input1.charAt(a) == input2.charAt(b)) {
-			result++;
-			result += dfs(a+1 , b+1);
-		}else {
-			result = Math.max(dfs(a+1,b), dfs(a,b+1));
-		}
-		dp[a][b] = result;
-		return result;
-	}
-	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		input1 = br.readLine();
-		input2 = br.readLine();
-		dp = new int[input1.length()][input2.length()];
-		for (int i = 0 ; i < input1.length(); i++) {
-			for(int j = 0  ; j < input2.length(); j++) {
-				dp[i][j] = -1;
-			}
-		}
-		System.out.println(dfs(0,0));
-	}
+
+    static String command[] = new String[2];
+    static int dp[][];
+    static int n, m;
+
+    static void dfs(int y, int x) {
+        if (y > n) {
+            return;
+        }
+        char now1 = command[0].charAt(y-1);
+        char now2 = command[1].charAt(x-1);
+        dp[y][x] = Math.max(dp[y][x],dp[y-1][x]);
+        dp[y][x] = Math.max(dp[y - 1][x], dp[y][x - 1]);
+        if (now1 == now2) {
+            dp[y][x] = Math.max(dp[y][x], dp[y - 1][x - 1] + 1);
+        } else {
+            dp[y][x] = Math.max(dp[y][x], dp[y - 1][x - 1]);
+        }
+
+        x++;
+        if (x > m) {
+            y++;
+            x = 1;
+        }
+        dfs(y, x);
+    }
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        command[0] = br.readLine();
+        command[1] = br.readLine();
+        n = command[0].length();
+        m = command[1].length();
+        dp = new int[n+1][m+1];
+        dfs(1, 1);
+//        for (int i = 0; i < n; i++) {
+//            for (int j = 0; j < m; j++) {
+//                System.out.print(dp[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+        System.out.println(dp[n][m]);
+
+
+    }
+
 }
