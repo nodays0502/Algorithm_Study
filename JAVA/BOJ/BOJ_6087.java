@@ -2,6 +2,7 @@ package BOJ;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
@@ -12,23 +13,23 @@ public class BOJ_6087 {
     static int dx[] = {0,1,0,-1};
     static char map[][];
     static int n,m;
-    static boolean visited[][][];
+    static int visited[][][];
     static int bfs(int[] start, int[] end){
         Queue<newNode> q = new PriorityQueue<>((o1,o2)->{
             return o1.cnt - o2.cnt;
         });
+        int result = 987654321;
         q.offer(new newNode(start[0],start[1],-1,-1));
         while(!q.isEmpty()){
             newNode now = q.poll();
-            System.out.println(now.y+" "+now.x+" "+ now.dir+" "+ now.cnt);
             int dir = now.dir;
             int cnt = now.cnt;
-            if(now.y == end[0] && now.x == end[1]) return cnt;
+            if(now.y == end[0] && now.x == end[1]) {result = Math.min(result,cnt);break;}
             for(int i = 0 ; i < 4; i++){
                 int ny = now.y + dy[i];
                 int nx = now.x + dx[i];
-                if(nx >= 0 && nx < m && ny >= 0 && ny < n && map[ny][nx] != '*' && !visited[ny][nx][i]){
-                    visited[ny][nx][i] = true;
+                if(nx >= 0 && nx < m && ny >= 0 && ny < n && map[ny][nx] != '*' && visited[ny][nx][i] >= cnt){
+                    visited[ny][nx][i] = cnt;
                     if(dir != i){
                         q.offer(new newNode(ny,nx,cnt+1,i));
                     }else{
@@ -37,7 +38,7 @@ public class BOJ_6087 {
                 }
             }
         }
-        return -1;
+        return result;
     }
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -46,12 +47,13 @@ public class BOJ_6087 {
         m = stoi.apply(st.nextToken());
         n = stoi.apply(st.nextToken());
         map = new char[n][m];
-        visited = new boolean[n][m][4];
+        visited = new int[n][m][4];
         int[] start = null;
         int[] end = null;
         for(int i = 0 ; i < n ;i++){
             String command = br.readLine();
             for(int j = 0 ; j < m ;j++){
+                Arrays.fill(visited[i][j],987654321);
                 map[i][j] = command.charAt(j);
                 if(map[i][j] == 'C'){
                     if(start == null){
