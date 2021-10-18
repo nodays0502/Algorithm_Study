@@ -48,3 +48,53 @@ class Solution {
         return answer;
     }
 }
+
+/* 2
+import java.util.*;
+class Solution {
+    static int dy[] = {0,1,0,-1};
+    static int dx[] = {1,0,-1,0};
+    static int[][] map;
+    static int n,m;
+    static void init(){
+        map = new int[n][m];
+        int num = 0;
+        for(int i = 0 ; i < n ; i++){
+            for(int j = 0 ; j < m ; j++){
+                map[i][j] = ++num;
+            }
+        }
+    }
+    static int move(int y1, int x1, int y2, int x2){ // 인덱스로 접근
+        // System.out.println(y1+" "+x1);
+        int ny = y1;
+        int nx = x1;
+        int prev = map[ny][nx];
+        int result = prev;
+        for(int i = 0 ; i < 4 ; i++){
+            while(ny+dy[i] >= y1 && ny+dy[i] <= y2 
+                  && nx+dx[i] >= x1 && nx+dx[i] <= x2){
+                ny += dy[i];
+                nx += dx[i];
+                int temp = map[ny][nx];
+                map[ny][nx] = prev;
+                prev = temp;
+                result = Math.min(result,prev);
+            }
+        }
+        return result;
+    }
+    public int[] solution(int rows, int columns, int[][] queries) {
+        int[] answer = new int[queries.length];
+        n = rows;
+        m = columns;
+        init();
+        for(int i = 0 ; i < queries.length ; i++){
+            answer[i] = move(queries[i][0]-1, queries[i][1]-1, 
+                             queries[i][2]-1, queries[i][3]-1);
+        }
+        return answer;
+    }
+}
+
+*/
